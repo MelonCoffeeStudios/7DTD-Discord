@@ -130,6 +130,7 @@ require("./lib/init.js")(pjson, config, configPrivate);
 
 ////// # Functions # //////
 function handleMsgFromGame(line) {
+  console.log("test: "  + lines)
   var split = line.split(" ");
   var type = split[3];
 
@@ -142,6 +143,17 @@ function handleMsgFromGame(line) {
     if(channel !== null) {
       // Cut off the timestamp and other info
       var msg = split[4];
+      if(msg.toLowerCase().includes("joined the game")){
+        numPlayers ++;
+        updateDiscordStatus(1);
+      }
+      if(msg.toLowerCase().includes("left the game")){
+        numPlayers--;
+        if(numPlayers == -1){
+          numPlayers = 1;
+        }
+        updateDiscordStatus(1);
+      }
       for(var i = 5; i <= split.length-1; i++) {
         msg = msg + " " + split[i];
       }
@@ -177,17 +189,7 @@ function handleMsgFromGame(line) {
       msg = msg.replace("'","").replace("'","").replace("\n","");
 
       if(type === "GMSG") {
-        if(msg.toLowerCase().includes("joined the game")){
-          numPlayers ++;
-          updateDiscordStatus(1);
-        }
-        if(msg.toLowerCase().includes("left the game")){
-          numPlayers--;
-          if(numPlayers == -1){
-            numPlayers = 1;
-          }
-          updateDiscordStatus(1);
-        }
+
         // Remove join and leave messages.
         if(msg.endsWith("the game") && config["disable-join-leave-gmsgs"]) {
           return;
