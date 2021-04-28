@@ -11,6 +11,8 @@ var TelnetClient = require("telnet-client");
 
 var channel = void 0;
 
+var numPlayers = 0;
+
 var d7dtdState = {
   doReconnect: 1,
 
@@ -175,6 +177,17 @@ function handleMsgFromGame(line) {
       msg = msg.replace("'","").replace("'","").replace("\n","");
 
       if(type === "GMSG") {
+        if(msg.toLowerCase().includes("joined the game")){
+          numPlayers ++;
+          updateDiscordStatus(1);
+        }
+        if(msg.toLowerCase().includes("left the game")){
+          numPlayers--;
+          if(numPlayers == -1){
+            numPlayers = 1;
+          }
+          updateDiscordStatus(1);
+        }
         // Remove join and leave messages.
         if(msg.endsWith("the game") && config["disable-join-leave-gmsgs"]) {
           return;
@@ -261,7 +274,7 @@ function updateDiscordStatus(status) {
         client.user.setStatus("idle");
       }
       else {
-        client.user.setActivity(`7DTD | Type ${prefix}help`);
+        client.user.setActivity(`${numPlayers} players Online`);
         client.user.setStatus("online");
       }
     }
