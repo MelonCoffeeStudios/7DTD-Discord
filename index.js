@@ -138,22 +138,25 @@ function handleMsgFromGame(line) {
     type = type.replace(":", "");
   }
 
-  if(line.toLowerCase().includes("joined the game")){
-    numPlayers ++;
-    updateDiscordStatus(1);
-  }
-  if(line.toLowerCase().includes("left the game")){
-    numPlayers--;
-    if(numPlayers == -1){
-      numPlayers = 1;
+  if(line.includes("GMSG")){
+    if(line.toLowerCase().includes("joined the game")){
+      numPlayers ++;
+      updateDiscordStatus(1);
     }
-    updateDiscordStatus(1);
-  }
+    if(line.toLowerCase().includes("left the game")){
+      numPlayers--;
+      if(numPlayers == -1){
+        numPlayers = 1;
+      }
+      updateDiscordStatus(1);
+    }
 
+  }
   if((!config["disable-chatmsgs"] && type === "Chat") || (!config["disable-gmsgs"] && type === "GMSG")) {
     // Make sure the channel exists.
     if(channel !== null) {
       // Cut off the timestamp and other info
+      var msg = split[4];
 
       for(var i = 5; i <= split.length-1; i++) {
         msg = msg + " " + split[i];
