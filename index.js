@@ -130,7 +130,7 @@ require("./lib/init.js")(pjson, config, configPrivate);
 
 ////// # Functions # //////
 function handleMsgFromGame(line) {
-  console.log("test: "  + lines)
+  console.log("test: "  + line)
   var split = line.split(" ");
   var type = split[3];
 
